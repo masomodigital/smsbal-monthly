@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Balance Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Check Your SMS Balance</h2>
+    <label for="userId">Enter User ID:</label>
+    <input type="text" id="userId" placeholder="Enter your User ID">
+    <button onclick="checkSMSBalance()">Check Balance</button>
+
+    <div id="result"></div>
+
+    <script>
+        function checkSMSBalance() {
+            const userId = document.getElementById("userId").value;
+            if (!userId) {
+                alert("Please enter a User ID.");
+                return;
+            }
+
+            fetch(`https://script.google.com/macros/s/AKfycbw5-8PBJoadv_noHDZm18YMwOAQXBrzJLaI29-flUnihKoIQoA89tEhZL8yHgfJkiU/exec?userId=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("result").innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                    } else {
+                        document.getElementById("result").innerHTML = `
+                            <p>User ID: <strong>${data.userId}</strong></p>
+                            <p>Messages Sent Today: <strong>${data.sentMessages}</strong></p>
+                            <p style="color: green; font-weight: bold;">Remaining SMS Balance: ${data.balance}</p>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("result").innerHTML = `<p style="color: red;">Failed to fetch data.</p>`;
+                });
+        }
+    </script>
+
+</body>
+</html>
